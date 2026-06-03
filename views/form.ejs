@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Enrollment Portal</title>
+</head>
+<body style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f4f8; margin: 0; padding: 50px 20px;">
+
+    <div style="max-width: 600px; margin: 0 auto; background: #ffffff; padding: 35px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.05);">
+        
+        <h2 style="margin-top: 0; color: #1e293b; font-size: 1.8rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px;">
+            🚀 Developer Bootcamp Enrollment
+        </h2>
+        <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 25px;">Please fill out the technical registration matrix below.</p>
+
+        <% const hasErrors = Object.keys(errors || {}).length > 0; %>
+        <% if (hasErrors) { %>
+            <div style="background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; padding: 14px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 0.95rem;">
+                ⚠️ There are validation issues below. Please correct the highlighted fields and resubmit.
+            </div>
+        <% } %>
+
+        <script>
+            function validateForm() {
+                const phoneInput = document.getElementById('phone').value;
+                const feedbackBlock = document.getElementById('clientErrorBox');
+                
+                // Clear initial views
+                feedbackBlock.style.display = 'none';
+                feedbackBlock.innerHTML = '';
+
+                // Inline Check: Ensure phone is numeric and exactly 10 digits
+                if (!/^\d{10}$/.test(phoneInput)) {
+                    feedbackBlock.style.display = 'block';
+                    feedbackBlock.innerHTML = '⚠️ <strong>Client-Side Alert:</strong> Phone number must contain exactly 10 numeric characters.';
+                    window.scrollTo(0, 0);
+                    return false; // Blocks form transmission
+                }
+                return true; // Continues to backend processing
+            }
+        </script>
+
+        <div id="clientErrorBox" style="display: none; background-color: #fff1f2; color: #be123c; border: 1px solid #fecdd3; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 0.9rem;"></div>
+
+        <form action="/enroll" method="POST" onsubmit="return validateForm()">
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155;">Full Name</label>
+                <input type="text" name="fullName" required value="<%= oldInput.fullName || '' %>" style="width: 100%; padding: 10px; border: 1px solid <%= errors.fullName ? '#ef4444' : '#cbd5e1' %>; border-radius: 6px; box-sizing: border-box; font-size: 1rem;">
+                <% if (errors.fullName) { %>
+                    <span style="color: #ef4444; font-size: 0.85rem; display: block; margin-top: 4px;"><%= errors.fullName %></span>
+                <% } %>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155;">Email Address</label>
+                <input type="email" name="email" autocomplete="email" value="<%= oldInput.email || '' %>" required style="width: 100%; padding: 10px; border: 1px solid <%= errors.email ? '#ef4444' : '#cbd5e1' %>; border-radius: 6px; box-sizing: border-box; font-size: 1rem;">
+                <% if (errors.email) { %>
+                    <span style="color: #ef4444; font-size: 0.85rem; display: block; margin-top: 4px;"><%= errors.email %></span>
+                <% } %>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155;">Contact Number (10-Digit Mobile)</label>
+                <input type="tel" id="phone" name="phone" autocomplete="tel" pattern="\d{10}" inputmode="numeric" required value="<%= oldInput.phone || '' %>" style="width: 100%; padding: 10px; border: 1px solid <%= errors.phone ? '#ef4444' : '#cbd5e1' %>; border-radius: 6px; box-sizing: border-box; font-size: 1rem;">
+                <% if (errors.phone) { %>
+                    <span style="color: #ef4444; font-size: 0.85rem; display: block; margin-top: 4px;"><%= errors.phone %></span>
+                <% } %>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #334155;">Specialization Track</label>
+                <select name="course" required style="width: 100%; padding: 10px; border: 1px solid <%= errors.course ? '#ef4444' : '#cbd5e1' %>; border-radius: 6px; background-color: #fff; font-size: 1rem;">
+                    <option value="" disabled <%= !oldInput.course ? 'selected' : '' %>>-- Select Technology Focus --</option>
+                    <option value="MERN Stack Architecture" <%= oldInput.course === 'MERN Stack Architecture' ? 'selected' : '' %>>MERN Stack Architecture</option>
+                    <option value="Python Data Systems" <%= oldInput.course === 'Python Data Systems' ? 'selected' : '' %>>Python Data Systems</option>
+                    <option value="Java Enterprise Applications" <%= oldInput.course === 'Java Enterprise Applications' ? 'selected' : '' %>>Java Enterprise Applications</option>
+                </select>
+                <% if (errors.course) { %>
+                    <span style="color: #ef4444; font-size: 0.85rem; display: block; margin-top: 4px;"><%= errors.course %></span>
+                <% } %>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #334155;">Experience Proficiency Tiers</label>
+                <div style="display: flex; gap: 20px;">
+                    <label style="font-weight: 500; cursor: pointer; color: #475569;">
+                        <input type="radio" name="experience" value="Beginner" <%= oldInput.experience === 'Beginner' ? 'checked' : '' %> style="margin-right: 5px;" required> Beginner
+                    </label>
+                    <label style="font-weight: 500; cursor: pointer; color: #475569;">
+                        <input type="radio" name="experience" value="Intermediate" <%= oldInput.experience === 'Intermediate' ? 'checked' : '' %> style="margin-right: 5px;"> Intermediate
+                    </label>
+                    <label style="font-weight: 500; cursor: pointer; color: #475569;">
+                        <input type="radio" name="experience" value="Advanced" <%= oldInput.experience === 'Advanced' ? 'checked' : '' %> style="margin-right: 5px;"> Advanced
+                    </label>
+                </div>
+                <% if (errors.experience) { %>
+                    <span style="color: #ef4444; font-size: 0.85rem; display: block; margin-top: 6px;"><%= errors.experience %></span>
+                <% } %>
+            </div>
+
+            <button type="submit" style="width: 100%; padding: 12px; background-color: #2563eb; color: #ffffff; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.2);">
+                Process System Enrollment →
+            </button>
+        </form>
+    </div>
+
+</body>
+</html>
